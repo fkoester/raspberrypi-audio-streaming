@@ -242,6 +242,8 @@ In order to automatically connect to the Bluetooth devices and to link this blue
 pi@raspberrypi:~ $ sudo chmod +x /usr/local/bin/a2dp-connect
 ```
 
+This script assumes you only have one sound output device and automatically uses that. If you have multiple output devices, you therefore need to verify that the variable `PA_SINK` in `/usr/local/bin/a2dp-connect` is set to the correct device.
+
 Furthermore, we need a udev rule. Create the file `/etc/udev/rules.d/99-input.rules` with the following content:
 ```
 KERNEL=="input[0-9]*", RUN+="/usr/local/bin/a2dp-autoconnect"

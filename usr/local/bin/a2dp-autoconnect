@@ -3,7 +3,7 @@
 # The original script: http://blog.mrverrall.co.uk/2013/01/raspberry-pi-a2dp-bluetooth-audio.html.
 
 # Find the right sink with `pactl list sinks short`.
-PA_SINK=$(pactl list sinks short | awk '{print $2}')
+PA_SINK=$(pactl list sinks short | head -n1 | awk '{print $2}')
 BT_MAC=$(echo "$NAME" | sed 's/:/_/g' | sed 's/\"//g')
 
 function log {
