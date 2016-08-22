@@ -257,7 +257,7 @@ That's it! Now you should be able to connect your bluetooth devices and stream a
 * [/etc/avahi/avahi-daemon.conf](etc/avahi/avahi-daemon.conf)
 
 **Bluetooth**
-* [/etc/bluetooth/main.conf](/etc/bluetooth/audio.conf)
+* [/etc/bluetooth/main.conf](/etc/bluetooth/main.conf)
 * [/etc/bluetooth/audio.conf](etc/bluetooth/audio.conf)
 
 **Pulseaudio**
