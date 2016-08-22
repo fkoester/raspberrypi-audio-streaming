@@ -10,13 +10,13 @@ to your stereo hi-fi system.
 Schematics:
 ```
 +-------------------+                +-------------------------------+             +---------------------+
-|                   |  Local network |               ||              |             |                     |
+|                   | Local network  |               ||              |             |                     |
 | PulseAudio Client | +------------->+               ||              |             |                     |
 |                   |                |               ||              |             |                     |
 +-------------------+                |               ||  HifiBerry   |             |                     |
                                      |  Raspberry Pi ||              | Cinch/SPDIF | Stereo Hi-Fi system |
 +-------------------+                |               ||  or other    +------------->                     |
-|                   |  Bluetooth A2DP|               || sound output |             |                     |
+|                   | Bluetooth A2DP |               || sound output |             |                     |
 |  Bluetooth Device | +------------->+               ||              |             |                     |
 |                   |                |               ||              |             |                     |
 +-------------------+                +-------------------------------+             +---------------------+
