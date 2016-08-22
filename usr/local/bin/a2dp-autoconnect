@@ -2,10 +2,9 @@
 # Source: https://gist.github.com/oleq/24e09112b07464acbda1
 # The original script: http://blog.mrverrall.co.uk/2013/01/raspberry-pi-a2dp-bluetooth-audio.html.
 
-# Find the right sink with `pactl list sources short`.
-PA_SINK="alsa_output.platform-soc_sound.analog-stereo"
+# Find the right sink with `pactl list sinks short`.
+PA_SINK=$(pactl list sinks short | awk '{print $2}')
 BT_MAC=$(echo "$NAME" | sed 's/:/_/g' | sed 's/\"//g')
-BT_USER=pi
 
 function log {
 	echo "[$(date)]: $*" >> /var/log/a2dp-autoconnect
@@ -16,7 +15,7 @@ function checkSource {
 	local _sources=$(pactl list sources short)
 
 	# Check if any sources are currently running and that our new device is valid.
-	if [[ "$_sources" =~ RUNIING ]]; then
+	if [[ "$_sources" =~ RUNNING ]]; then
 		log "Source is already RUNNING. Available sources:"
 		log "$_sources"
 		return
@@ -48,4 +47,3 @@ then
 		connect "$incoming"
 	fi
 fi
-
