@@ -35,10 +35,10 @@ The following table shows the products I used and which can be ordered as a bund
 | Raspberry Pi 3 Model B                          	| € 31,90    	|
 | HifiBerry DAC+ Light                            	| € 19,90  	  |
 | HifiBerry universal case                        	| € 9,90   	  |
-| microSD card 8GB, class 10                      	| € 5,90     	|
+| MicroSD card 8GB, class 10                      	| € 5,90     	|
 | Power supply                                    	| € 9,90   	  |
 | Shipping via registered mail                    	| € 15,00  	  |
-| import sales tax 19% (when shipping to Germany) 	| € 17,58  	  |
+| Import sales tax 19% (when shipping to Germany) 	| € 17,58  	  |
 |-------------------------------------------------	|------------ |
 | **Total**                                        	| **€ 110,08**|
 
