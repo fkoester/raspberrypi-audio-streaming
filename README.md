@@ -15,7 +15,7 @@ Schematics:
 |                   |                |               ||              |             |                     |
 +-------------------+                |               ||  HifiBerry   |             |                     |
                                      |  Raspberry Pi ||              | Cinch/SPDIF | Stereo Hi-Fi system |
-+-------------------+                |               ||  or other    +------------->                     |
++-------------------+                |               ||  or other    | +---------> |                     |
 |                   | Bluetooth A2DP |               || sound output |             |                     |
 |  Bluetooth Device | +------------> +               ||              |             |                     |
 |                   |                |               ||              |             |                     |
