@@ -270,6 +270,10 @@ That's it! Now you should be able to connect your bluetooth devices and stream a
 * [/etc/udev/rules.d/99-input.rules](etc/udev/rules.d/99-input.rules)
 * [/usr/local/bin/a2dp-autoconnect](usr/local/bin/a2dp-autoconnect)
 
+## Known issues / workarounds
+
+For the known issues and possible workarounds see the [issue tracker](https://github.com/fkoester/raspberrypi-audio-streaming/issues).
+
 ## Sources
 * https://www.hifiberry.com/guides/updating-the-linux-kernel/
 * https://www.hifiberry.com/guides/configuring-linux-3-18-x/
