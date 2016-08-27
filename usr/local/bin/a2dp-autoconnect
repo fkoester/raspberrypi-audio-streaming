@@ -14,13 +14,6 @@ function checkSource {
 	# Get the current sources
 	local _sources=$(pactl list sources short)
 
-	# Check if any sources are currently running and that our new device is valid.
-	if [[ "$_sources" =~ RUNNING ]]; then
-		log "Source is already RUNNING. Available sources:"
-		log "$_sources"
-		return
-	fi
-
 	if [[ ! "$_sources" =~ "$1" ]] ; then
 		log "Unrecognized source. Available sources:"
 		log "\n$_sources"
