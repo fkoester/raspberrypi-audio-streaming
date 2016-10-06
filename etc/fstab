@@ -4,5 +4,6 @@ proc            /proc           proc    defaults          0       0
 tmpfs           /var/log        tmpfs   nodev,nosuid    0       0
 tmpfs           /var/tmp        tmpfs   nodev,nosuid,mode=1777  0       0
 tmpfs           /tmp            tmpfs   nodev,nosuid,mode=1777  0       0
+tmpfs           /var/lib/pulse  tmpfs   nodev,nosuid,mode=1777  0 0
 # a swapfile is not a swap partition, no line here
 #   use  dphys-swapfile swap[on|off]  for that
