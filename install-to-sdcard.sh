@@ -69,19 +69,12 @@ log_info "Copying image to sdcard..."
 sudo dd bs=4M if="${IMAGE_FILE}" of="${TARGET_DEVICE}" || die "Failed to copy image to sd card"
 sudo sync
 
-log_info "Creating extra partition..."
-make_partition "${TARGET_DEVICE}" $(sudo parted -m ${TARGET_DEVICE} unit s print free | grep "free;" | tail -n 1 | awk -F':' '{print $2 " " $3}')
-
 log_info "Creating partition mappings..."
-PART_1_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 1 {print $1; exit}')"
-PART_2_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 2 {print $1; exit}')"
-PART_3_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 3 {print $1; exit}')"
 sudo kpartx -as ${TARGET_DEVICE} || die "Could not add partition mappings"
 
-log_info "Formatting extra partition..."
-sudo mkfs.ext4 -F "${PART_3_DEV}"
-
 log_info "Mounting target filesystems"
+PART_1_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 1 {print $1; exit}')"
+PART_2_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 2 {print $1; exit}')"
 sudo mount "${PART_2_DEV}" "${MOUNT_TARGET}" || cleanup_and_die "Could not mount target device root fs"
 sudo mount "${PART_1_DEV}" "${MOUNT_TARGET}/boot" || cleanup_and_die "Could not mount target device boot fs"
 

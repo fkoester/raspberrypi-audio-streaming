@@ -19,6 +19,9 @@ apt-get update || die "Failed to update package list"
 log_info "Installing rpi-update..."
 apt-get install -y rpi-update || die "Failed to install rpi-update"
 
+log_info "Enabling SSH server..."
+systemctl enable ssh.service
+
 log_info "Running rpi-update..."
 rpi-update ${FIRMWARE_VERSION} || die "Execution of rpi-update failed"
 
@@ -78,6 +81,14 @@ ln -s /tmp /var/lib/dhcp || die "Failed to create link"
 ln -s /tmp /var/spool || die "Failed to create link"
 ln -s /tmp /var/lock || die "Failed to create link"
 ln -s /tmp/resolv.conf /etc/resolv.conf || die "Failed to create link"
+
+# Create a 10 MB image file in /boot which will be mounted via loop device to /var/lib/bluetooth
+IMG_FILE="/boot/bt-persist.img"
+dd if=/dev/zero of=${IMG_FILE} bs=1MB count=10 || die "Failed to create image file"
+mkfs.ext4 -F ${IMG_FILE} || die "Failed to format image file"
+
+# Create necessary mountpoints
+mkdir -vp /var/lib/pulse /var/lib/bluetooth
 
 #sed  -i '/^exit 0$/i chmod 777 /tmp' /etc/rc.local
 
