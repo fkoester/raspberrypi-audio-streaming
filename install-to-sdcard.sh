@@ -66,10 +66,12 @@ sudo dd bs=4M if="${IMAGE_FILE}" of="${TARGET_DEVICE}" || die "Failed to copy im
 sudo sync
 
 log_info "Mounting target filesystems"
+PART_1_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 1 {print $1; exit}')"
+PART_2_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 2 {print $1; exit}')"
 sudo kpartx -as ${TARGET_DEVICE} || die "Could not add partition mappings"
 
-sudo mount /dev/mapper/${TARGET_DEVICE_BASENAME}p2 ${MOUNT_TARGET} || cleanup_and_die "Could not mount target device root fs"
-sudo mount /dev/mapper/${TARGET_DEVICE_BASENAME}p1 ${MOUNT_TARGET}/boot || cleanup_and_die "Could not mount target device boot fs"
+sudo mount "${PART_2_DEV}" "${MOUNT_TARGET}" || cleanup_and_die "Could not mount target device root fs"
+sudo mount "${PART_1_DEV}" "${MOUNT_TARGET}/boot" || cleanup_and_die "Could not mount target device boot fs"
 
 log_info "Performing setup inside target filesystem..."
 sudo proot -q qemu-arm -r ${MOUNT_TARGET} \
