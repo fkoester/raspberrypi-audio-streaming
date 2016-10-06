@@ -20,7 +20,8 @@ log_info "Installing rpi-update..."
 apt-get install -y rpi-update || die "Failed to install rpi-update"
 
 log_info "Enabling SSH server..."
-systemctl enable ssh.service
+dpkg-reconfigure openssh-server || die "Failed to setup ssh server"
+systemctl enable ssh.service || die "Failed to setup ssh server"
 
 log_info "Running rpi-update..."
 rpi-update ${FIRMWARE_VERSION} || die "Execution of rpi-update failed"
