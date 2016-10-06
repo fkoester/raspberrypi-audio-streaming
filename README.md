@@ -107,7 +107,7 @@ card 0: sndrpihifiberry [snd_rpi_hifiberry_dac], device 0: HifiBerry DAC HiFi pc
   Subdevice #0: subdevice #0
 ```
 
-### Setup PulseAudio network straming and publishing via Zeroconf
+### Setup PulseAudio network streaming and publishing via Zeroconf
 
 In order to be able to stream audio from PulseAudio clients on the network to the Pi, you first have to install the necessary packages:
 
@@ -239,10 +239,10 @@ trust XX:XX:XX:XX:XX:XX
 In order to automatically connect to the Bluetooth devices and to link this bluetooth source to the PulseAudio sink, we need a little helper script. Add the script [a2dp-autoconnect](usr/local/bin/a2dp-autoconnect) to `/usr/local/bin` and make it executable:
 
 ```bash
-pi@raspberrypi:~ $ sudo chmod +x /usr/local/bin/a2dp-connect
+pi@raspberrypi:~ $ sudo chmod +x /usr/local/bin/a2dp-autoconnect
 ```
 
-This script assumes you only have one sound output device and automatically uses that. If you have multiple output devices, you therefore need to verify that the variable `PA_SINK` in `/usr/local/bin/a2dp-connect` is set to the correct device.
+This script assumes you only have one sound output device and automatically uses that. If you have multiple output devices, you therefore need to verify that the variable `PA_SINK` in `/usr/local/bin/a2dp-autoconnect` is set to the correct device.
 
 Furthermore, we need a udev rule. Create the file `/etc/udev/rules.d/99-input.rules` with the following content:
 ```
