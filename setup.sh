@@ -3,7 +3,7 @@
 export LANG=C
 
 SRC="/root/raspberrypi-audio-streaming"
-FIRMWARE_VERSION="9e8f2d6f0c5afd54ab2018c7634785941f04ef91"
+FIRMWARE_VERSION="9063f3eefb3469fcf2e9181aa623d2ca4908a675"
 
 source ${SRC}/common.sh
 
@@ -54,17 +54,22 @@ sed -i 's/^use-ipv4=yes$/use-ipv4=no/' /etc/avahi/avahi-daemon.conf || die "Fail
 ## Setup PulseAudio Bluetooth A2DP target ##
 
 log_info "Installing PulseAudio bluetooth modules..."
-apt-get install -y --no-install-recommends pulseaudio-module-bluetooth || die "Failed to install pulseaudio bluetooth module"
+apt-get install -y --no-install-recommends pulseaudio-module-bluetooth python-gobject python-dbus || die "Failed to install pulseaudio bluetooth module"
 
 echo "load-module module-bluetooth-policy" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 echo "load-module module-bluetooth-discover" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 
 log_info "Configuring Bluetooth..."
-copy_file /etc/bluetooth/audio.conf
+#copy_file /etc/bluetooth/audio.conf
 copy_file /etc/bluetooth/main.conf
-copy_file /usr/local/bin/a2dp-autoconnect
-copy_file /etc/udev/rules.d/99-input.rules
+#copy_file /usr/local/bin/a2dp-autoconnect
+copy_file /usr/local/bin/simple-agent
+#copy_file /etc/udev/rules.d/99-input.rules
 
-chmod +x /usr/local/bin/a2dp-autoconnect || die "Failed to change permissions of a2dp-autoconnect script"
+sed  -i '/^exit 0$/i hciconfig hci0 piscan' /etc/rc.local
+sed  -i '/^exit 0$/i hciconfig hciconfig hci0 sspmode 1' /etc/rc.local
+sed  -i '/^exit 0$/i /usr/local/bin/simple-agent &' /etc/rc.local
+
+chmod +x /usr/local/bin/* || die "Failed to make scripts executable"
 
 echo "Setup finished successfully!"

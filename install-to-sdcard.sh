@@ -6,11 +6,11 @@ SRC_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TARGET_DEVICE="${1}"
 
-RASPIAN_BUILD_DATE="2016-05-27"
-RASPIAN_RELEASE_DATE="2016-05-31"
+RASPIAN_BUILD_DATE="2016-09-23"
+RASPIAN_RELEASE_DATE="2016-09-28"
 
 IMAGE_PACKAGE="${RASPIAN_BUILD_DATE}-raspbian-jessie-lite.zip"
-SHA1_SUM="03b6ea33efc3bb4d475f528421d554fc1ef91944"
+SHA1_SUM="3a34e7b05e1e6e9042294b29065144748625bea8"
 RASPBIAN_BASE_IMAGE_URL="http://downloads.raspberrypi.org/raspbian_lite/images/raspbian_lite-${RASPIAN_RELEASE_DATE}/${IMAGE_PACKAGE}"
 DOWNLOAD_DIR="$HOME/Downloads"
 WORKING_DIR=/tmp/raspberrypi-audio-streaming
