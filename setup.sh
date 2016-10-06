@@ -32,6 +32,18 @@ echo "dtoverlay=hifiberry-dac" >> /boot/config.txt || die "Failed to enable hifi
 
 copy_file /etc/asound.conf
 
+## Make filesystem readonly ##
+
+log_info "Preparing readonly filesystem..."
+copy_file /etc/fstab
+rm -rf /var/lib/dhcp/ /var/spool /var/lock /etc/resolv.conf || die "Failed to remove files"
+ln -s /tmp /var/lib/dhcp || die "Failed to create link"
+ln -s /tmp /var/spool || die "Failed to create link"
+ln -s /tmp /var/lock || die "Failed to create link"
+ln -s /tmp/resolv.conf /etc/resolv.conf || die "Failed to create link"
+
+sed  -i '/^exit 0$/i chmod 777 /tmp' /etc/rc.local
+
 ## Setup PulseAudio network streaming and publishing via Zeroconf ##
 
 log_info "Installing PulseAudio and it's zeroconf modules..."
@@ -60,11 +72,8 @@ echo "load-module module-bluetooth-policy" >> /etc/pulse/system.pa || die "Faile
 echo "load-module module-bluetooth-discover" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 
 log_info "Configuring Bluetooth..."
-#copy_file /etc/bluetooth/audio.conf
 copy_file /etc/bluetooth/main.conf
-#copy_file /usr/local/bin/a2dp-autoconnect
 copy_file /usr/local/bin/simple-agent
-#copy_file /etc/udev/rules.d/99-input.rules
 
 sed  -i '/^exit 0$/i hciconfig hci0 piscan' /etc/rc.local
 sed  -i '/^exit 0$/i hciconfig hciconfig hci0 sspmode 1' /etc/rc.local
