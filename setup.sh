@@ -14,10 +14,15 @@ function copy_file {
 
 ## Setup HifiBerry ##
 
+log_info "Updating package list..."
 apt-get update || die "Failed to update package list"
+log_info "Installing rpi-update..."
 apt-get install -y rpi-update || die "Failed to install rpi-update"
 
+log_info "Running rpi-update..."
 rpi-update ${FIRMWARE_VERSION} || die "Execution of rpi-update failed"
+
+log_info "Configuring sound drivers..."
 
 # Disable onboard sound
 sed -e '/dtparam=audio=on/ s/^#*/#/' -i /boot/config.txt || die "Failed to disable onboard sound"
@@ -29,8 +34,10 @@ copy_file /etc/asound.conf
 
 ## Setup PulseAudio network streaming and publishing via Zeroconf ##
 
+log_info "Installing PulseAudio and it's zeroconf modules..."
 apt-get install -y --no-install-recommends pulseaudio pulseaudio-module-zeroconf  || die "Failed to install pulseaudio"
 
+log_info "Setting up PulseAudio..."
 copy_file /etc/systemd/system/pulseaudio.service
 
 systemctl enable pulseaudio.service || die "Failed to enable pulseaudio systemd unit"
@@ -40,16 +47,19 @@ usermod -a -G pulse-access root || die "Failed to add user root to pulse-access 
 echo "load-module module-native-protocol-tcp auth-anonymous=1" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 echo "load-module module-zeroconf-publish" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 
+log_info "Configuring Avahi..."
 sed -i 's/^load-module module-udev-detect$/load-module module-udev-detect tsched=0/' /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 sed -i 's/^use-ipv4=yes$/use-ipv4=no/' /etc/avahi/avahi-daemon.conf || die "Failed to configure avahi"
 
 ## Setup PulseAudio Bluetooth A2DP target ##
 
+log_info "Installing PulseAudio bluetooth modules..."
 apt-get install -y --no-install-recommends pulseaudio-module-bluetooth || die "Failed to install pulseaudio bluetooth module"
 
 echo "load-module module-bluetooth-policy" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 echo "load-module module-bluetooth-discover" >> /etc/pulse/system.pa || die "Failed to configure pulseaudio"
 
+log_info "Configuring Bluetooth..."
 copy_file /etc/bluetooth/audio.conf
 copy_file /etc/bluetooth/main.conf
 copy_file /usr/local/bin/a2dp-autoconnect
