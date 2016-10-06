@@ -281,3 +281,4 @@ For the known issues and possible workarounds see the [issue tracker](https://gi
 * https://possiblelossofprecision.net/?p=1956
 * https://informatik.zone/hi-fi-mit-raspberry-pi-hifiberry-dac-und-pulseaudio/
 * https://wiki.archlinux.org/index.php/PulseAudio/Troubleshooting#Glitches.2C_skips_or_crackling
+* http://www.heise.de/ct/ausgabe/2016-21-Den-Raspi-als-Bluetooth-Empfaenger-einsetzen-3330683.html (German)
