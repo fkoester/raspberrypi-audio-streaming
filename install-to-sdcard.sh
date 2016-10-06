@@ -79,16 +79,17 @@ PART_3_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 3 {print 
 sudo kpartx -as ${TARGET_DEVICE} || die "Could not add partition mappings"
 
 log_info "Formatting extra partition..."
-sudo mkfs.ext4 "${PART_3_DEV}"
+sudo mkfs.ext4 -F "${PART_3_DEV}"
 
 log_info "Mounting target filesystems"
 sudo mount "${PART_2_DEV}" "${MOUNT_TARGET}" || cleanup_and_die "Could not mount target device root fs"
 sudo mount "${PART_1_DEV}" "${MOUNT_TARGET}/boot" || cleanup_and_die "Could not mount target device boot fs"
 
+sudo cp -L /etc/resolv.conf "${MOUNT_TARGET}/etc/"
+
 log_info "Performing setup inside target filesystem..."
 sudo proot -q qemu-arm -r ${MOUNT_TARGET} \
   -b ${SRC_DIR}:${TARGET_SRC_DIR} \
-  -b /etc/resolv.conf \
   -b /dev \
   -b /sys \
   -b /proc \
