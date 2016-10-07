@@ -1,0 +1,5 @@
+qemu-user-static w/ arm support
+multipath-tools
+proot
+dd
+curl
