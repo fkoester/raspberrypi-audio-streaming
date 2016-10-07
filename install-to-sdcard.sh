@@ -21,14 +21,22 @@ MOUNTED_TARGET_SRC_DIR="${MOUNT_TARGET}/root/raspberrypi-audio-streaming"
 source ./common.sh
 
 function cleanup {
-  sudo umount --recursive ${MOUNT_TARGET} || echo "Failed to unmount target device fs"
-  sudo kpartx -d ${TARGET_DEVICE} || die "Could not delete partition mappings"
+  umount --recursive ${MOUNT_TARGET} || echo "Failed to unmount target device fs"
+  kpartx -d ${TARGET_DEVICE} || die "Could not delete partition mappings"
 }
 
 function cleanup_and_die {
   cleanup
   die "${1}"
 }
+
+function make_partition {
+    parted -s "$1" unit s mkpart primary "$2" "$3"
+}
+
+if [ "${USER}" != "root" ]; then
+  die "Need to run as root!"
+fi
 
 if [ ! -b "${TARGET_DEVICE}" ]; then
   die "Given argument is not a valid block device"
@@ -69,22 +77,33 @@ IMAGE_FILE="${IMAGE_PACKAGE/%zip/img}"
 
 cd "${WORKING_DIR}"
 log_info "Copying image to sdcard..."
-sudo dd bs=4M if="${IMAGE_FILE}" of="${TARGET_DEVICE}" || die "Failed to copy image to sd card"
-sudo sync
+dd bs=4M if="${IMAGE_FILE}" of="${TARGET_DEVICE}" || die "Failed to copy image to sd card"
+sync
+
+log_info "Creating extra partition..."
+make_partition "${TARGET_DEVICE}" $(parted -m ${TARGET_DEVICE} unit s print free | grep "free;" | head -n 1 | awk -F':' '{print $2 " " $3}')
 
 log_info "Creating partition mappings..."
-sudo kpartx -as ${TARGET_DEVICE} || die "Could not add partition mappings"
+PART_1_DEV="/dev/mapper/$(kpartx -l ${TARGET_DEVICE} | awk 'NR == 1 {print $1; exit}')"
+PART_2_DEV="/dev/mapper/$(kpartx -l ${TARGET_DEVICE} | awk 'NR == 2 {print $1; exit}')"
+PART_3_DEV="/dev/mapper/$(kpartx -l ${TARGET_DEVICE} | awk 'NR == 3 {print $1; exit}')"
+kpartx -as ${TARGET_DEVICE} || die "Could not add partition mappings"
+
+log_info "Formatting extra partition..."
+mkfs.ext4 -F "${PART_3_DEV}" || die "Failed to format extra partition"
 
 log_info "Mounting target filesystems"
-PART_1_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 1 {print $1; exit}')"
-PART_2_DEV="/dev/mapper/$(sudo kpartx -l ${TARGET_DEVICE} | awk 'NR == 2 {print $1; exit}')"
-sudo mount "${PART_2_DEV}" "${MOUNT_TARGET}" || cleanup_and_die "Could not mount target device root fs"
-sudo mount "${PART_1_DEV}" "${MOUNT_TARGET}/boot" || cleanup_and_die "Could not mount target device boot fs"
 
-sudo cp -L /etc/resolv.conf "${MOUNT_TARGET}/etc/"
+mount "${PART_2_DEV}" "${MOUNT_TARGET}" || cleanup_and_die "Could not mount target device root fs"
+mount "${PART_1_DEV}" "${MOUNT_TARGET}/boot" || cleanup_and_die "Could not mount target device boot fs"
+mkdir -vp "${MOUNT_TARGET}/var/lib/pulse" "${MOUNT_TARGET}/var/lib/bluetooth"
+mount "${PART_3_DEV}" "${MOUNT_TARGET}/var/lib/bluetooth" || cleanup_and_die "Could not mount bluetooth fs"
+
+# Copy dns configuration
+cp -L /etc/resolv.conf "${MOUNT_TARGET}/etc/"
 
 log_info "Performing setup inside target filesystem..."
-sudo proot -q qemu-arm -r ${MOUNT_TARGET} \
+proot -q qemu-arm -r ${MOUNT_TARGET} \
   -b ${SRC_DIR}:${TARGET_SRC_DIR} \
   -b /dev \
   -b /sys \

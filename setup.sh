@@ -86,14 +86,6 @@ ln -s /tmp/resolv.conf /etc/resolv.conf || die "Failed to create link"
 ln -s /run/lock /var/lock || die "Failed to create link"
 ln -sf /proc/mounts /etc/mtab || die "Failed to create link"
 
-# Create a 10 MB image file in /boot which will be mounted via loop device to /var/lib/bluetooth
-IMG_FILE="/boot/bt-persist.img"
-dd if=/dev/zero of=${IMG_FILE} bs=1MB count=10 || die "Failed to create image file"
-mkfs.ext4 -F ${IMG_FILE} || die "Failed to format image file"
-
-# Create necessary mountpoints
-mkdir -vp /var/lib/pulse /var/lib/bluetooth
-
 # Disable services that would fail on ro but are not needed anyways
 systemctl disable apply_noobs_os_config.service
 systemctl disable resize2fs_once.service
