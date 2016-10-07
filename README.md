@@ -24,6 +24,12 @@ Schematics:
 
 ![Raspberry Pi HifiBerry Audio Streaming Box](images/pi+hifiberry+case.jpg)
 
+## Robustness
+
+Because it uses a read-only root filesystem, it should be also safe to power loss, so you can just turn it on and off via your power switch!
+
+Note: In order for paired bluetooth devices to be persistent, the bluetooth configuration is stored on a small writable filesystem which is extra secured against data loss and incosistencies.
+
 ## Hardware
 
 In the following guide we will use a Raspberry Pi 3 Model B and a HifiBerry DAC+ Light, but the instructions should work the same with differnt Raspberry Pi models starting from Raspberry Pi 1, with other HifiBerry modules, e.g. HifiBerry Digi+ with digital output or even with external USB sound devices. Because of the terrible sound quality of Raspberry's onboard sound, I would strongly recommend against using it for Hi-fi output. The instructions should still apply, though.
