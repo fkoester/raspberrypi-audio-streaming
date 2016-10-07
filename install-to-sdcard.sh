@@ -30,14 +30,17 @@ function cleanup_and_die {
   die "${1}"
 }
 
-function make_partition {
-    sudo parted -s "$1" unit s mkpart primary "$2" "$3"
-}
-
 if [ ! -b "${TARGET_DEVICE}" ]; then
   die "Given argument is not a valid block device"
 fi
 TARGET_DEVICE_BASENAME=$(basename ${TARGET_DEVICE})
+
+echo "Are you sure you want to install to ${TARGET_DEVICE}? ALL DATA ON IT WILL BE LOST!"
+read -p "If you are absolutely sure, answer with uppercase yes: " choice
+case "$choice" in
+  YES ) echo "Okay, continuing...";;
+  * ) exit 0;;
+esac
 
 rm -rf ${WORKING_DIR} || die "Failed to cleanup working directory"
 

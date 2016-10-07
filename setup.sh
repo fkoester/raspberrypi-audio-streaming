@@ -66,12 +66,14 @@ echo "load-module module-bluetooth-discover" >> /etc/pulse/system.pa || die "Fai
 log_info "Configuring Bluetooth..."
 copy_file /etc/bluetooth/main.conf
 copy_file /usr/local/bin/simple-agent
-
-sed  -i '/^exit 0$/i hciconfig hci0 piscan' /etc/rc.local
-sed  -i '/^exit 0$/i hciconfig hciconfig hci0 sspmode 1' /etc/rc.local
-sed  -i '/^exit 0$/i /usr/local/bin/simple-agent &' /etc/rc.local
+copy_file /usr/local/bin/configure-bluetooth-device.sh
+copy_file /etc/systemd/system/bluetooth-simple-agent.service
+copy_file /etc/systemd/system/configure-bluetooth-device.service
 
 chmod +x /usr/local/bin/* || die "Failed to make scripts executable"
+
+systemctl enable configure-bluetooth-device.service || die "Failed to enable configure bt device systemd unit"
+systemctl enable bluetooth-simple-agent.service || die "Failed to enable simple-agent systemd unit"
 
 ## Make filesystem readonly ##
 
@@ -80,8 +82,9 @@ copy_file /etc/fstab
 rm -rf /var/lib/dhcp/ /var/spool /var/lock /etc/resolv.conf || die "Failed to remove files"
 ln -s /tmp /var/lib/dhcp || die "Failed to create link"
 ln -s /tmp /var/spool || die "Failed to create link"
-ln -s /tmp /var/lock || die "Failed to create link"
 ln -s /tmp/resolv.conf /etc/resolv.conf || die "Failed to create link"
+ln -s /run/lock /var/lock || die "Failed to create link"
+ln -sf /proc/mounts /etc/mtab || die "Failed to create link"
 
 # Create a 10 MB image file in /boot which will be mounted via loop device to /var/lib/bluetooth
 IMG_FILE="/boot/bt-persist.img"
@@ -91,6 +94,15 @@ mkfs.ext4 -F ${IMG_FILE} || die "Failed to format image file"
 # Create necessary mountpoints
 mkdir -vp /var/lib/pulse /var/lib/bluetooth
 
-#sed  -i '/^exit 0$/i chmod 777 /tmp' /etc/rc.local
+# Disable services that would fail on ro but are not needed anyways
+systemctl disable apply_noobs_os_config.service
+systemctl disable resize2fs_once.service
+
+systemctl mask systemd-rfkill@rfkill0.service
+systemctl mask systemd-rfkill@rfkill1.service
+
+systemctl mask systemd-random-seed.service
+# Somehow masking is not enough for that one, so remove it entirely.
+rm -fv /lib/systemd/system/systemd-random-seed.service
 
 echo "Setup finished successfully!"

@@ -1,0 +1,12 @@
+[Unit]
+Description=Bluetooth Simple Agent
+After=configure-bluetooth-device.service
+Wants=configure-bluetooth-device.service
+
+[Service]
+ExecStart=/usr/local/bin/simple-agent
+Type=simple
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
