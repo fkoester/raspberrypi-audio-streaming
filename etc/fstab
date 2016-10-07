@@ -6,4 +6,4 @@ tmpfs           /var/tmp            tmpfs   nodev,nosuid,mode=1777  0 0
 tmpfs           /tmp                tmpfs   nodev,nosuid,mode=1777  0 0
 tmpfs           /var/lib/pulse      tmpfs   nodev,nosuid,mode=1777  0 0
 
-/boot/bt-persist.img /var/lib/bluetooth ext4 loop,defaults,noatime  0 0
+/boot/bt-persist.img /var/lib/bluetooth ext4 loop,sync,nosuid,nodev,noatime,data=journal  0 2
